@@ -28,3 +28,7 @@ and one at the very end:
 	if [ $CONFIGURATION == "Release" ] ; then
 	    ${SRCROOT}/XcodeIconTagger/tagIcons.sh cleanup MyApp/Images
 	fi
+
+## Sample tagged icon
+
+![Tagged Icon](https://raw.github.com/bejo/XcodeIconTagger/master/sample/Icon-Small-50@2x.png)
