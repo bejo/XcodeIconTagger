@@ -8,7 +8,11 @@ tagMode="tag"
 cleanupMode="cleanup"
 
 iconsDirectory=`cd $2 && pwd`
-icons=(`/usr/libexec/PlistBuddy -c "Print CFBundleIconFiles" "${INFOPLIST_FILE}" | grep png | tr -d '\n'`)
+if [ $(echo "${iconsDirectory}" | grep -E "\.appiconset$") ]; then
+	icons=(`grep 'filename' "${iconsDirectory}/Contents.json" | cut -f2 -d: | tr -d ',' | tr -d '\n' | tr -d '"'`)
+else
+	icons=(`/usr/libexec/PlistBuddy -c "Print CFBundleIconFiles" "${INFOPLIST_FILE}" | grep png | tr -d '\n'`)
+fi
 
 taggerDirectory=`dirname $0`
 taggerPlist="tagImage.workflow/Contents/document.wflow"
