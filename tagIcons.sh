@@ -9,16 +9,18 @@ mode=$1
 tagMode="tag"
 cleanupMode="cleanup"
 
+taggerDirectory=`dirname $0`
+taggerPlist="tagImage.workflow/Contents/document.wflow"
+paramsPath=":actions:0:action:ActionParameters"
+
+IFS=$'\n'
 iconsDirectory=`cd $2 && pwd`
 if [ $(echo "${iconsDirectory}" | grep -E "\.appiconset$") ]; then
-	icons=(`grep 'filename' "${iconsDirectory}/Contents.json" | cut -f2 -d: | tr -d ',' | tr -d '\n' | tr -d '"'`)
+	icons=(`sed -n -e 's/.*filename.*: \"\(.*\)\",/\1/p' < "${iconsDirectory}/Contents.json"`)
 else
 	icons=(`/usr/libexec/PlistBuddy -c "Print CFBundleIconFiles" "${INFOPLIST_FILE}" | grep png | tr -d '\n'`)
 fi
 
-taggerDirectory=`dirname $0`
-taggerPlist="tagImage.workflow/Contents/document.wflow"
-paramsPath=":actions:0:action:ActionParameters"
 
 iconsCount=${#icons[*]}
 for (( i=0; i<iconsCount; i++ ))
