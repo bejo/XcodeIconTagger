@@ -8,6 +8,7 @@ version="${version1} [${version2}]"
 mode=$1
 tagMode="tag"
 cleanupMode="cleanup"
+customTagMode="custom"
 
 taggerDirectory=`dirname $0`
 taggerPlist="tagImage.workflow/Contents/document.wflow"
@@ -32,13 +33,18 @@ do
         width=`sips -g pixelWidth $icon | tail -n 1 | sed "s/ *pixelWidth: */ /"`
 
         if (( $height == $width )); then
-            if [ $mode == $tagMode ]; then
+            if [[ $mode = $tagMode || $mode = $customTagMode ]]; then
                 renderSize=$(( $width * 4 )) # for some reason it looks much better when rendering canvas are bigger than an icon
                 renderSize=$(( $renderSize + $width%2 )) # rendering canvas for odd sized images should also be odd
 
                 cd $taggerDirectory
                 /usr/libexec/PlistBuddy -c "Set $paramsPath:renderPixelsHigh $renderSize" -c "Set $paramsPath:renderPixelsWide $renderSize" $taggerPlist
-                automator -D text="$version"$'\n'"$commit" -D image="$icon" -i tagImage.qtz tagImage.workflow > /dev/null
+                if [[ $mode = $tagMode ]]; then
+                    textContent="$version"$'\n'"$commit"
+                elif [[ $mode = $customTagMode ]]; then
+                    textContent="$3"
+                fi
+                automator -D text="$textContent" -D image="$icon" -i tagImage.qtz tagImage.workflow > /dev/null
                 git checkout $taggerPlist
 
                 sips --cropToHeightWidth $height $width tagImage.png > /dev/null

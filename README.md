@@ -10,9 +10,10 @@ The entry point of the tagger is tagIcons.sh script, which takes two arguments:
 
 	tagIcons.sh <command> [path-to-icons-directory]
 	
-The two available commands are:
+The available commands are:
 
 * _tag_ - tags icons with version number and commit hash
+* _custom_ - tags icons with a custom string, provided in the script command
 * _cleanup_ - checkouts the icons to their original state
 
 The script is designed to be run as one of Xcode build phases. It uses environmental variables to retrieve application version and icons file names from application's Info Plist file (since the plist doesn't include full paths you still need to provide the base path to icons directory).
@@ -21,6 +22,12 @@ The easiest way to integrate XcodeIconTagger with your project is by adding two 
 
 	if [ $CONFIGURATION == "Release" ] ; then
     	${SRCROOT}/XcodeIconTagger/tagIcons.sh tag MyApp/Images
+	fi
+
+If instead of version/hash info in the tag, you want to put "My custom string":
+
+	if [ $CONFIGURATION == "Release" ] ; then
+    	${SRCROOT}/XcodeIconTagger/tagIcons.sh custom MyApp/Images "My custon string"
 	fi
 
 and one at the very end:
